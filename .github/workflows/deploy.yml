@@ -28,7 +28,7 @@ jobs:
         host: ${{ secrets.GCE_HOST }}
         username: ${{ secrets.GCE_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: target/your-app.jar
+        source: target/ticketingsystem-0.0.1-SNAPSHOT.jar
         target: /home/${{ secrets.GCE_USER }}/app/
 
     - name: Restart App via SSH
