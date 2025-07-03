@@ -33,7 +33,7 @@ jobs:
     - name: Get VM IP
       id: get_ip
       run: |
-        IP=$(gcloud compute instances describe ${{ secrets.GCE_INSTANCE }} --zone ${{ secrets.GCE_ZONE }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+        IP=$(gcloud compute instances describe ${{ secrets.GCE_INSTANCE_NAME }} --zone ${{ secrets.GCE_ZONE }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
         echo "HOST=$IP" >> $GITHUB_ENV
         
     - name: Copy JAR to GCE
