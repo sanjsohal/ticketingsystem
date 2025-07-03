@@ -22,6 +22,20 @@ jobs:
     - name: Build JAR
       run: ./mvnw clean package -DskipTests
 
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Get VM IP
+      id: get_ip
+      run: |
+        IP=$(gcloud compute instances describe ${{ secrets.GCE_INSTANCE }} --zone ${{ secrets.GCE_ZONE }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+        echo "HOST=$IP" >> $GITHUB_ENV
+        
     - name: Copy JAR to GCE
       uses: appleboy/scp-action@v0.1.4
       with:
