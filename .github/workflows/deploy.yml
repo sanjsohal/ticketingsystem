@@ -39,7 +39,7 @@ jobs:
     - name: Copy JAR to GCE
       uses: appleboy/scp-action@v0.1.4
       with:
-        host: ${{ secrets.GCE_HOST }}
+        host: ${{ env.HOST }}
         username: ${{ secrets.GCE_USER }}
         key: ${{ secrets.SSH_KEY }}
         source: target/ticketingsystem-0.0.1-SNAPSHOT.jar
@@ -48,7 +48,7 @@ jobs:
     - name: Restart App via SSH
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.GCE_HOST }}
+        host: ${{ env.HOST }}
         username: ${{ secrets.GCE_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
