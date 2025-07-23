@@ -1,0 +1,30 @@
+name: Deploy Ticketing System to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean package --no-transfer-progress
+
+      - name: Upload JAR to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ticketing-system-app5928
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: target/*.jar
