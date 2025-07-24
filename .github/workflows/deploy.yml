@@ -22,4 +22,3 @@ jobs:
           app-name: ticketing-system-app5928
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           package: .
-          startup-command: "mvn clean package -DskipTests -Dspring.profiles.active=dev"
