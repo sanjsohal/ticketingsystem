@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DummyController {
-    @GetMapping("/dummy")
+    @GetMapping("/api/public/dummy")
     public String dummyEndpoint() {
         return "Dummy endpoint is working!";
     }
