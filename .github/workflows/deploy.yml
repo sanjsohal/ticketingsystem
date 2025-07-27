@@ -6,28 +6,13 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-<<<<<<< Updated upstream
-      # Remove local build step
-      # Azure will build the project using Oryx
-      # We just upload the source code
-
-      - name: Deploy to Azure Web App (Build in Azure)
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ticketing-system-app5928
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: .
-=======
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -43,4 +28,3 @@ jobs:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: target/*.jar
->>>>>>> Stashed changes
