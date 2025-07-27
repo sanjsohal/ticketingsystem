@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-@Configuration
+//@Configuration
 public class FirebaseConfig {
 
     @PostConstruct

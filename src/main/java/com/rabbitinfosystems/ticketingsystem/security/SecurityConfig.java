@@ -21,11 +21,11 @@ public class SecurityConfig {
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(firebaseTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+      //          .addFilterBefore(firebaseTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    @Bean
+    //@Bean
     public FirebaseTokenFilter firebaseTokenFilter() {
         return new FirebaseTokenFilter();
     }
