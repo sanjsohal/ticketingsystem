@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
