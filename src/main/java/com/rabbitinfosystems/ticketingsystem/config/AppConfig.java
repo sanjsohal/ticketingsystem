@@ -4,17 +4,18 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@Profile(value = "dev")
-public class FirebaseConfig {
+public class AppConfig {
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
@@ -28,5 +29,14 @@ public class FirebaseConfig {
         return apps.isEmpty()
                 ? FirebaseAuth.getInstance(FirebaseApp.initializeApp(options))
                 : FirebaseAuth.getInstance(apps.get(0));
+    }
+
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration")
+                .baselineOnMigrate(true)
+                .load();
     }
 }
