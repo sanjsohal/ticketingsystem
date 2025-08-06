@@ -7,7 +7,7 @@ on:
 
 env:
   GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-  DATABASE_URL: ${{ secrets.DB_URL }}
+  DATABASE_HOST: ${{ secrets.DB_URL }}
   DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
   DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
