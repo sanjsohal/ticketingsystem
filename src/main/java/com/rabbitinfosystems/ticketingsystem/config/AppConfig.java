@@ -31,12 +31,4 @@ public class AppConfig {
                 : FirebaseAuth.getInstance(apps.get(0));
     }
 
-    @Bean(initMethod = "migrate")
-    public Flyway flyway(DataSource dataSource) {
-        return Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:db/migration")
-                .baselineOnMigrate(true)
-                .load();
-    }
 }
