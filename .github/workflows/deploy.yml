@@ -34,7 +34,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Test access to azure webapp
-        run: curl -v ${{ secrets.AZURE_WEBAPP_URL }}
+        run: curl -v https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
