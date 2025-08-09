@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class AppConfig {
 
     @Bean
+    @Profile("!local")
     public FirebaseAuth firebaseAuth() throws IOException {
         String credentialsJson = System.getenv("GOOGLE_CREDENTIALS");
 
