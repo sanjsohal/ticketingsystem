@@ -64,5 +64,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu/app/deploy/
+            cd /home/ubuntu/app/deploy/target/
             java -jar *.jar --spring.profiles.active=dev
