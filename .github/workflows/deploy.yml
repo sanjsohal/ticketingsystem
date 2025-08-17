@@ -67,8 +67,12 @@ jobs:
             cd /home/ubuntu/app/deploy/target/
             # Kill any old process
             pkill -f 'java -jar' || true
-            # Start new one with logs redirected
-            nohup java -jar *.jar --spring.profiles.active=dev > /home/ubuntu/app/app.log 2>&1 &
+            # Ensure log directory exists
+            mkdir -p /home/ubuntu/app/logs            
+            # Start app with nohup and log redirection
+            nohup java -jar *.jar --spring.profiles.active=dev > /home/ubuntu/app/logs/app.log 2>&1 &            
+            # Print confirmation
+            echo "App started. Logs being written to /home/ubuntu/app/logs/app.log"
 
       - name: Fetch application logs
         uses: appleboy/ssh-action@v0.1.10
