@@ -65,4 +65,18 @@ jobs:
           port: 22
           script: |
             cd /home/ubuntu/app/deploy/target/
-            java -jar *.jar --spring.profiles.active=dev
+            # Kill any old process
+            pkill -f 'java -jar' || true
+            # Start new one with logs redirected
+            nohup java -jar *.jar --spring.profiles.active=dev > /home/ubuntu/app/app.log 2>&1 &
+
+      - name: Fetch application logs
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ env.PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            tail -n 100 /home/ubuntu/app/app.log
+            echo "Application deployed successfully!"
