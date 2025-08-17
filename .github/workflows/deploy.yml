@@ -56,7 +56,7 @@ jobs:
           source: target/*.jar
           target: /home/ubuntu/app/deploy/
 
-      - name: Execute deploy script
+      - name: Configure systemd service and restart app
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ env.PUBLIC_IP }}
@@ -64,16 +64,40 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu/app/deploy/target/
-            # Kill any old process
-            pkill -f 'java -jar' || true
-            # Ensure log directory exists
-            mkdir -p /home/ubuntu/app/logs            
-            # Start app with nohup and log redirection
-            nohup java -jar *.jar --spring.profiles.active=dev > /home/ubuntu/app/logs/app.log 2>&1 &            
-            # Print confirmation
-            echo "App started. Logs being written to /home/ubuntu/app/logs/app.log"
-
+            APP_NAME=ticketing-system-backend
+            JAR_PATH=/home/ubuntu/app/deploy/target/$(ls /home/ubuntu/app/deploy/target/*.jar | head -n 1)
+            LOG_DIR=/home/ubuntu/app/logs
+            
+            sudo mkdir -p $LOG_DIR
+            sudo chown ubuntu:ubuntu $LOG_DIR
+            
+            #Create or overwrite systemd service file
+            sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
+            [Unit]
+            Description=Ticketing System Backend Service
+            After=network.target
+            
+            [Service]
+            User=ubuntu
+            WorkingDirectory=/home/ubuntu/app/deploy/target
+            ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
+            SuccessExitStatus=143
+            Restart=always
+            StandardOutput=append:$LOG_DIR/app.log
+            StandardError=append:$LOG_DIR/app.log
+            
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+            
+            # Reload systemd to recognize the new service
+            sudo systemctl daemon-reload
+            sudo systemctl enable $APP_NAME
+            sudo systemctl restart $APP_NAME
+            
+            echo "Service $APP_NAME configured and restarted successfully."
+            
+            
       - name: Fetch application logs
         uses: appleboy/ssh-action@v0.1.10
         with:
