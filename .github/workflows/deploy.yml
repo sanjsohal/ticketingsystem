@@ -80,6 +80,7 @@ jobs:
             [Service]
             User=ubuntu
             WorkingDirectory=/home/ubuntu/app/deploy/target
+            Environment=DATABASE_HOST=${DATABASE_HOST}
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
