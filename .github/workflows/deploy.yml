@@ -74,7 +74,7 @@ jobs:
             [Service]
             User=ubuntu
             WorkingDirectory=/home/ubuntu/app/deploy/target
-            EnvironmentFile=/etc/ticketing-system-backend.env
+            Environment="DATABASE_HOST=${{ secrets.DB_URL }}" "DATABASE_USERNAME=${{ secrets.DB_USERNAME }}" "DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}" "GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"    
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
