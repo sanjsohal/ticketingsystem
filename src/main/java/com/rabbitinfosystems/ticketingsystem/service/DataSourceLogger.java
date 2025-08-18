@@ -12,13 +12,14 @@ public class DataSourceLogger implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceLogger.class);
     
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.url:NOT_SET}")
     private String datasourceUrl;
 
     @Override
     public void run(String... args) {
-        log.info("Test Logs");
-        log.info("### SPRING DATASOURCE URL: " + datasourceUrl);
+        System.out.println("==== Datasource URL ====");
+        System.out.println(datasourceUrl);
+        System.out.println("========================");
     }
 }
 
