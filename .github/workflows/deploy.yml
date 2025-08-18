@@ -96,15 +96,3 @@ jobs:
             sudo systemctl restart $APP_NAME
             
             echo "Service $APP_NAME configured and restarted successfully."
-            
-
-      - name: Fetch application logs
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ env.PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            tail -n 100 /home/ubuntu/app/logs/app.log
-            echo "Application deployed successfully!"
