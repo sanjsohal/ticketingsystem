@@ -73,10 +73,10 @@ jobs:
             
             # Create/overwrite env file with secrets
             sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
-            DATABASE_HOST=${DATABASE_HOST}
-            DATABASE_USERNAME=${DATABASE_USERNAME}
-            DATABASE_PASSWORD=${DATABASE_PASSWORD}
-            GOOGLE_CREDENTIALS=${GOOGLE_CREDENTIALS}
+            DATABASE_HOST=${{ secrets.DB_URL }}
+            DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
+            DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
+            GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
             EOL
             
             #Create or overwrite systemd service file
