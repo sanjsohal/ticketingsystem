@@ -7,6 +7,8 @@ on:
 
 env:
   DATABASE_HOST: ${{ secrets.DB_URL }}
+  DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
+  DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
 jobs:
   build-and-deploy:
