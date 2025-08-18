@@ -65,7 +65,7 @@ jobs:
           port: 22
           script: |
             APP_NAME=ticketing-system-backend
-            JAR_PATH=/home/ubuntu/app/deploy/target/$(ls /home/ubuntu/app/deploy/target/*.jar | head -n 1)
+            JAR_PATH=$(ls /home/ubuntu/app/deploy/target/*.jar | head -n 1)
             LOG_DIR=/home/ubuntu/app/logs
             
             sudo mkdir -p $LOG_DIR
