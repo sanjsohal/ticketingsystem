@@ -71,6 +71,14 @@ jobs:
             sudo mkdir -p $LOG_DIR
             sudo chown ubuntu:ubuntu $LOG_DIR
             
+            # Create/overwrite env file with secrets
+            sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
+            DATABASE_HOST=${DATABASE_HOST}
+            DATABASE_USERNAME=${DATABASE_USERNAME}
+            DATABASE_PASSWORD=${DATABASE_PASSWORD}
+            GOOGLE_CREDENTIALS=${GOOGLE_CREDENTIALS}
+            EOL
+            
             #Create or overwrite systemd service file
             sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
             [Unit]
