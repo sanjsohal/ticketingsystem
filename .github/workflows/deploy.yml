@@ -80,7 +80,7 @@ jobs:
             [Service]
             User=ubuntu
             WorkingDirectory=/home/ubuntu/app/deploy/target
-            Environment="DATABASE_HOST=${DATABASE_HOST}"
+            Environment="DATABASE_HOST=${{ secrets.DB_URL }}"
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
@@ -90,6 +90,9 @@ jobs:
             [Install]
             WantedBy=multi-user.target
             EOF
+            
+            # Remove old log file
+            rm -f $LOG_DIR/app.log
             
             # Reload systemd to recognize the new service
             sudo systemctl daemon-reload
