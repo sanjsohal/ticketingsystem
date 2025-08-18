@@ -17,6 +17,7 @@ public class DataSourceLogger implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("Test Logs");
         log.info("### SPRING DATASOURCE URL: " + datasourceUrl);
     }
 }
