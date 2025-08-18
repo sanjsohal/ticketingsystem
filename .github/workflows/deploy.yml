@@ -80,7 +80,7 @@ jobs:
             [Service]
             User=ubuntu
             WorkingDirectory=/home/ubuntu/app/deploy/target
-            Environment=DATABASE_HOST=${DATABASE_HOST}
+            Environment=DATABASE_HOST=jdbc:mysql://localhost:3306/ticketing_system
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
