@@ -84,8 +84,8 @@ jobs:
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
-            StandardOutput=append:$LOG_DIR/app.log
-            StandardError=append:$LOG_DIR/app.log
+            StandardOutput=file:$LOG_DIR/app.log
+            StandardError=file:$LOG_DIR/app.log
             
             [Install]
             WantedBy=multi-user.target
