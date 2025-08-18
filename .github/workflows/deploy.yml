@@ -82,7 +82,7 @@ jobs:
             WorkingDirectory=/home/ubuntu/app/deploy/target
             ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
             SuccessExitStatus=143
-            Restart=always
+            Restart=on-failure
             StandardOutput=append:$LOG_DIR/app.log
             StandardError=append:$LOG_DIR/app.log
             
