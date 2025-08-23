@@ -19,7 +19,8 @@ public class AppConfig {
     @Profile("!local")
     public FirebaseAuth firebaseAuth() throws IOException {
         String credentialsJson = System.getenv("GOOGLE_CREDENTIALS");
-
+        System.out.println("Debugging credentialsJson");
+        System.out.println(credentialsJson);
         ByteArrayInputStream serviceAccount = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
