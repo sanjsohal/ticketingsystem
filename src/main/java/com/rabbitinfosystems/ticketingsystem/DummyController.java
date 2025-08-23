@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DummyController {
     @GetMapping("/api/public/dummy")
     public String dummyEndpoint() {
-        return "Dummy endpoint is working!"+System.getenv("TEST_ENV");
+        return "Dummy endpoint is working!";
     }
 } 
