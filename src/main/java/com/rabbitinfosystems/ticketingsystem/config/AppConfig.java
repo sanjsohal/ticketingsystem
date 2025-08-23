@@ -4,35 +4,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.rabbitinfosystems.ticketingsystem.service.FirebaseSecretService;
+import com.rabbitinfosystems.ticketingsystem.service.AwsSecretsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 
 @Configuration
 public class AppConfig {
 
+    private final AwsSecretsService awsSecretsService;
+
+    public AppConfig(AwsSecretsService awsSecretsService) {
+        this.awsSecretsService = awsSecretsService;
+    }
+
     @Bean
     @Profile("!local")
-    public FirebaseApp firebaseApp(FirebaseSecretService firebaseSecretService) {
-        try {
-            FirebaseSecretService.FirebaseConfig config = firebaseSecretService.getFirebaseConfig();
+    public FirebaseApp firebaseApp() throws IOException {
+        String secretJson = awsSecretsService.getSecret("ticketing/firebase/service-account");
 
-            FileInputStream serviceAccount = new FileInputStream("firebase-service-account.json");
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
+        // Convert JSON string to stream
+        ByteArrayInputStream serviceAccountStream =
+                new ByteArrayInputStream(secretJson.getBytes(StandardCharsets.UTF_8));
 
-            return FirebaseApp.initializeApp(options);
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))
+                .build();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize Firebase", e);
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
         }
+        return FirebaseApp.initializeApp(options);
     }
 
     @Bean
