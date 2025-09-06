@@ -15,8 +15,8 @@ jobs:
       - name: Build with Maven
         env:
           DATABASE_HOST: ${{ secrets.DB_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: mvn clean package
 
       - name: Upload Artifact to VCCL Server
