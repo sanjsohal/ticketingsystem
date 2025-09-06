@@ -4,7 +4,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
-import com.rabbitinfosystems.ticketingsystem.service.AwsSecretsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,15 +17,10 @@ import java.nio.charset.StandardCharsets;
 @Profile("!local")
 public class FirebaseConfig {
 
-    private final AwsSecretsService awsSecretsService;
-
-    public FirebaseConfig(AwsSecretsService awsSecretsService) {
-        this.awsSecretsService = awsSecretsService;
-    }
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        String secretJson = awsSecretsService.getSecret("ticketing/firebase/service-account");
+        String secretJson = System.getenv("GOOGLE_CREDENTIALS");
 
         // Convert JSON string to stream
         ByteArrayInputStream serviceAccountStream =

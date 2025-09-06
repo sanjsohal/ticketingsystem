@@ -17,6 +17,7 @@ jobs:
           DATABASE_HOST: ${{ secrets.DB_URL }}
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: mvn clean package
 
       - name: Upload Artifact to VCCL Server
