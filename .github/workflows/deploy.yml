@@ -1,117 +1,55 @@
-name: Build and Deploy to AWS
+- name: Upload Artifact to VCCl Server
+  uses: appleboy/scp-action@v0.1.4
+  with:
+    host: ${{ secrets.SERVER_IP }}
+    key: ${{ secrets.VCCL_SSH_KEY }}
+    port: 22
+    source: target/*.jar
+    target: /home/user_ubuntu/app/deploy/
 
-on:
-  push:
-    branches:
-      - main
+- name: Configure systemd service and restart app
+  uses: appleboy/ssh-action@v0.1.10
+  with:
+    host: ${{ secrets.SERVER_IP }}
+    username: root
+    key: ${{ secrets.VCCL_SSH_KEY }}
+    port: 22
+    script: |
+      APP_NAME=ticketing-system-backend
+      JAR_PATH=$(ls /home/user_ubuntu/app/deploy/target/*.jar | head -n 1)
+      LOG_DIR=/home/user_ubuntu/app/logs
 
-env:
-  DATABASE_HOST: ${{ secrets.DB_URL }}
-  DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
-  DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: ap-south-1
+      sudo mkdir -p $LOG_DIR
+      sudo chown ubuntu:ubuntu $LOG_DIR
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+      sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
+      DATABASE_HOST=${{ secrets.DB_URL }}
+      DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
+      DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
+      GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      EOL
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
+      [Unit]
+      Description=Ticketing System Backend Service
+      After=network.target
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+      [Service]
+      User=ubuntu
+      WorkingDirectory=/home/ubuntu/app/deploy/target
+      EnvironmentFile=/etc/ticketing-system-backend.env
+      ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
+      SuccessExitStatus=143
+      Restart=no
+      StandardOutput=file:$LOG_DIR/app.log
+      StandardError=file:$LOG_DIR/app.log
 
-      - name: Build with Maven
-        run: mvn clean package
+      [Install]
+      WantedBy=multi-user.target
+      EOF
 
-      - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+      rm -f $LOG_DIR/app.log
 
-      - name: Get EC2 Public IP
-        id: ec2
-        run: |
-          INSTANCE_ID="${{ secrets.EC2_INSTANCE_ID }}"
-          PUBLIC_IP=$(aws ec2 describe-instances \
-            --instance-ids "$INSTANCE_ID" \
-            --query "Reservations[0].Instances[0].PublicIpAddress" \
-            --output text)
-            echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
-
-
-      - name: Upload Artifact to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ env.PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: target/*.jar
-          target: /home/ubuntu/app/deploy/
-
-      - name: Configure systemd service and restart app
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ env.PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            APP_NAME=ticketing-system-backend
-            JAR_PATH=$(ls /home/ubuntu/app/deploy/target/*.jar | head -n 1)
-            LOG_DIR=/home/ubuntu/app/logs
-            
-            sudo mkdir -p $LOG_DIR
-            sudo chown ubuntu:ubuntu $LOG_DIR
-            
-            # Create/overwrite env file with secrets
-            sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
-            DATABASE_HOST=${{ secrets.DB_URL }}
-            DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
-            DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION=ap-south-1
-            EOL
-            
-            #Create or overwrite systemd service file
-            sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
-            [Unit]
-            Description=Ticketing System Backend Service
-            After=network.target
-            
-            [Service]
-            User=ubuntu
-            WorkingDirectory=/home/ubuntu/app/deploy/target
-            EnvironmentFile=/etc/ticketing-system-backend.env
-            Environment="JAVA_TOOL_OPTIONS=-Daws.imds.client.disableStrictFetching=true"
-            ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
-            SuccessExitStatus=143
-            Restart=no
-            StandardOutput=file:$LOG_DIR/app.log
-            StandardError=file:$LOG_DIR/app.log
-            
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-            
-            # Remove old log file
-            rm -f $LOG_DIR/app.log
-            
-            # Reload systemd to recognize the new service
-            sudo systemctl daemon-reload
-            sudo systemctl enable $APP_NAME
-            sudo systemctl restart $APP_NAME
-            
-            echo "Service $APP_NAME configured and restarted successfully."
+      sudo systemctl daemon-reload
+      sudo systemctl enable $APP_NAME
+      sudo systemctl restart $APP_NAME

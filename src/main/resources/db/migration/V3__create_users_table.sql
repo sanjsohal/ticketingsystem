@@ -1,0 +1,10 @@
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    firebase_uid VARCHAR(128) UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    role VARCHAR(50) DEFAULT 'USER',
+    email_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
