@@ -35,8 +35,8 @@
       After=network.target
 
       [Service]
-      User=ubuntu
-      WorkingDirectory=/home/ubuntu/app/deploy/target
+      User=root
+      WorkingDirectory=/home/user_ubuntu/app/deploy/target
       EnvironmentFile=/etc/ticketing-system-backend.env
       ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
       SuccessExitStatus=143
