@@ -17,25 +17,18 @@ jobs:
           DATABASE_HOST: ${{ secrets.DB_URL }}
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: mvn clean package
 
-      # 🔑 Create firebase json on runner
-      - name: Create Firebase Service Account File
-        run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > firebaseServiceAccountKey.json
-
-      # 📤 Upload JAR + Firebase key to server
-      - name: Upload Artifact and Firebase Key to VCCL Server
+      - name: Upload Artifact to VCCL Server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
-          source: |
-            target/*.jar
-            firebaseServiceAccountKey.json
-          target: /home/user_ubuntu/app/deploy/
+          source: "target/*.jar"
+          target: "/home/user_ubuntu/app/deploy/"
 
       - name: Configure systemd service and restart app
         uses: appleboy/ssh-action@v0.1.10
@@ -51,20 +44,19 @@ jobs:
 
             sudo mkdir -p $LOG_DIR
             sudo chown ubuntu:ubuntu $LOG_DIR
-
-            # ✅ Move firebase key into place
+            
             sudo mkdir -p /etc/firebase
-            sudo mv /home/user_ubuntu/app/deploy/firebaseServiceAccountKey.json /etc/firebase/firebaseServiceAccountKey.json
+            sudo bash -c "cat > /etc/firebase/firebaseServiceAccountKey.json" <<EOL
+            ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+            EOL
 
-            # ✅ Environment variables
             sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            FIREBASE_SERVICE_ACCOUNT_PATH=/etc/firebase/firebaseServiceAccountKey.json
+            GOOGLE_CREDENTIALS=/etc/firebase/firebaseServiceAccountKey.json
             EOL
 
-            # ✅ Systemd service
             sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
             [Unit]
             Description=Ticketing System Backend Service

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -21,11 +20,14 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(System.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")));
+        String secretJson = System.getenv("GOOGLE_CREDENTIALS");
+
+        // Convert JSON string to stream
+        ByteArrayInputStream serviceAccountStream =
+                new ByteArrayInputStream(secretJson.getBytes(StandardCharsets.UTF_8));
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(credentials)
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))
                 .build();
 
         FirebaseApp.getApps();
