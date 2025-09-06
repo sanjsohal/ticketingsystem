@@ -1,55 +1,70 @@
-- name: Upload Artifact to VCCl Server
-  uses: appleboy/scp-action@v0.1.4
-  with:
-    host: ${{ secrets.SERVER_IP }}
-    key: ${{ secrets.VCCL_SSH_KEY }}
-    port: 22
-    source: target/*.jar
-    target: /home/user_ubuntu/app/deploy/
+name: Deploy App to VCCL
 
-- name: Configure systemd service and restart app
-  uses: appleboy/ssh-action@v0.1.10
-  with:
-    host: ${{ secrets.SERVER_IP }}
-    username: root
-    key: ${{ secrets.VCCL_SSH_KEY }}
-    port: 22
-    script: |
-      APP_NAME=ticketing-system-backend
-      JAR_PATH=$(ls /home/user_ubuntu/app/deploy/target/*.jar | head -n 1)
-      LOG_DIR=/home/user_ubuntu/app/logs
+on:
+  push:
+    branches:
+      - main
 
-      sudo mkdir -p $LOG_DIR
-      sudo chown ubuntu:ubuntu $LOG_DIR
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
-      DATABASE_HOST=${{ secrets.DB_URL }}
-      DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
-      DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-      GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-      EOL
+      - name: Upload Artifact to VCCL Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.VCCL_SSH_KEY }}
+          port: 22
+          source: "target/*.jar"
+          target: "/home/user_ubuntu/app/deploy/"
 
-      sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
-      [Unit]
-      Description=Ticketing System Backend Service
-      After=network.target
+      - name: Configure systemd service and restart app
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.VCCL_SSH_KEY }}
+          port: 22
+          script: |
+            APP_NAME=ticketing-system-backend
+            JAR_PATH=$(ls /home/user_ubuntu/app/deploy/target/*.jar | head -n 1)
+            LOG_DIR=/home/user_ubuntu/app/logs
 
-      [Service]
-      User=root
-      WorkingDirectory=/home/user_ubuntu/app/deploy/target
-      EnvironmentFile=/etc/ticketing-system-backend.env
-      ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
-      SuccessExitStatus=143
-      Restart=no
-      StandardOutput=file:$LOG_DIR/app.log
-      StandardError=file:$LOG_DIR/app.log
+            sudo mkdir -p $LOG_DIR
+            sudo chown ubuntu:ubuntu $LOG_DIR
 
-      [Install]
-      WantedBy=multi-user.target
-      EOF
+            sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
+            DATABASE_HOST=${{ secrets.DB_URL }}
+            DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
+            DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
+            GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+            EOL
 
-      rm -f $LOG_DIR/app.log
+            sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
+            [Unit]
+            Description=Ticketing System Backend Service
+            After=network.target
 
-      sudo systemctl daemon-reload
-      sudo systemctl enable $APP_NAME
-      sudo systemctl restart $APP_NAME
+            [Service]
+            User=root
+            WorkingDirectory=/home/user_ubuntu/app/deploy/target
+            EnvironmentFile=/etc/ticketing-system-backend.env
+            ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
+            SuccessExitStatus=143
+            Restart=no
+            StandardOutput=file:$LOG_DIR/app.log
+            StandardError=file:$LOG_DIR/app.log
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+
+            rm -f $LOG_DIR/app.log
+
+            sudo systemctl daemon-reload
+            sudo systemctl enable $APP_NAME
+            sudo systemctl restart $APP_NAME
