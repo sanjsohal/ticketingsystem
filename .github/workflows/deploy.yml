@@ -14,7 +14,7 @@ jobs:
 
       - name: Build with Maven
         env:
-          SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }}
+          DATABASE_HOST: ${{ secrets.DB_URL }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: mvn clean package
