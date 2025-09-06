@@ -22,7 +22,7 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(System.getenv("GOOGLE_CREDENTIALS")));
+                .fromStream(new FileInputStream(System.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")));
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)

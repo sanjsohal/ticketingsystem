@@ -54,7 +54,7 @@ jobs:
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            GOOGLE_CREDENTIALS=/etc/firebase/firebaseServiceAccountKey.json
+            FIREBASE_SERVICE_ACCOUNT_PATH=/etc/firebase/firebaseServiceAccountKey.json
             EOL
 
             sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
