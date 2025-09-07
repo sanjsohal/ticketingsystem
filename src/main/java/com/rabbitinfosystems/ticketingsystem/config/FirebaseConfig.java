@@ -20,12 +20,8 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        System.out.println("=== FIREBASE CONFIG METHOD CALLED ===");
-        System.out.println("This is a hardcoded test message");
-
         String secretJson = System.getenv("GOOGLE_CREDENTIALS");
-        System.out.println(secretJson.substring(0, 200));
-
+        secretJson = secretJson.replaceAll("\\n", "\n");
 
         // Convert JSON string to stream
         ByteArrayInputStream serviceAccountStream =
