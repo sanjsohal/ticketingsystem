@@ -72,7 +72,7 @@ jobs:
             User=root
             WorkingDirectory=$DEPLOY_DIR
             EnvironmentFile=/etc/ticketing-system-backend.env
-            ExecStart=/usr/bin/java -jar $JAR_PATH --spring.profiles.active=dev
+            ExecStart=/usr/bin/java -jar $JAR_PATH --Dspring.profiles.active=dev
             SuccessExitStatus=143
             Restart=no
             StandardOutput=file:$LOG_DIR/app.log
