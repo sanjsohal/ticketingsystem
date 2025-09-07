@@ -21,7 +21,7 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         String secretJson = System.getenv("GOOGLE_CREDENTIALS");
-        secretJson = secretJson.replaceAll("\\n", "\n");
+        System.out.println(secretJson);
 
         // Convert JSON string to stream
         ByteArrayInputStream serviceAccountStream =
