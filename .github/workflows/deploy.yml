@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug firebase secret
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | jq .
+
       - name: Build with Maven
         env:
           DATABASE_HOST: ${{ secrets.DB_URL }}
