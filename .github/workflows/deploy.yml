@@ -12,16 +12,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug firebase secret
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+      - name: Decode Firebase service account
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > serviceAccount.json
+        shell: bash
 
       - name: Build with Maven
         env:
           DATABASE_HOST: ${{ secrets.DB_URL }}
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GOOGLE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: mvn clean package
+
 
       - name: Upload Artifact to VCCL Server
         uses: appleboy/scp-action@v0.1.4
@@ -52,7 +54,6 @@ jobs:
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
             EOL
 
             sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
