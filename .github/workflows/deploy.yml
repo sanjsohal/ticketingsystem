@@ -47,17 +47,12 @@ jobs:
 
             sudo mkdir -p $LOG_DIR
             sudo chown ubuntu:ubuntu $LOG_DIR
-            
-            sudo mkdir -p /etc/firebase
-            sudo bash -c "cat > /etc/firebase/firebaseServiceAccountKey.json" <<EOL
-            ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-            EOL
 
             sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            GOOGLE_CREDENTIALS=/etc/firebase/firebaseServiceAccountKey.json
+            GOOGLE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
             EOL
 
             sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
