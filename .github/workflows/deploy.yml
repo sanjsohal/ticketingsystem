@@ -17,12 +17,11 @@ jobs:
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > serviceAccount.json
         shell: bash
 
-      - name: Build with Maven
-        env:
-          DATABASE_HOST: ${{ secrets.DB_URL }}
-          DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: mvn clean package
+      - name: Move artifacts into deploy folder
+        run: |
+          mkdir deploy
+          cp target/*.jar deploy/
+          cp serviceAccount.json deploy/
 
 
       - name: Upload Artifact to VCCL Server
