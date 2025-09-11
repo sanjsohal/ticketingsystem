@@ -52,13 +52,13 @@ jobs:
             JAR_PATH=$(ls $DEPLOY_DIR/*.jar | head -n 1)
             LOG_DIR=/home/ticketing/logs
 
-            cat > /etc/ticketing-system-backend.env
+            cat > /etc/ticketing-system-backend.env <<EOL
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
             EOL
 
-            cat > /etc/systemd/system/$APP_NAME.service
+            cat > /etc/systemd/system/$APP_NAME.service <<EOF
             [Unit]
             Description=Ticketing System Backend Service
             After=network.target
@@ -78,6 +78,8 @@ jobs:
             EOF
 
             rm -f $LOG_DIR/app.log
+            
+            sudo systemctl unmask $APP_NAME
 
             sudo systemctl daemon-reload
             sudo systemctl enable $APP_NAME
