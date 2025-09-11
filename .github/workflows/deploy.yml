@@ -47,7 +47,7 @@ jobs:
           port: 22
           script: |
             APP_NAME=ticketing-system-backend
-            DEPLOY_DIR=/home/user_ubuntu/app/deploy
+            DEPLOY_DIR=${{ env.DEPLOY_DIR }}
             JAR_PATH=$(ls $DEPLOY_DIR/*.jar | head -n 1)
             LOG_DIR=/home/user_ubuntu/app/logs
 
@@ -69,7 +69,7 @@ jobs:
             User=root
             WorkingDirectory=$DEPLOY_DIR
             EnvironmentFile=/etc/ticketing-system-backend.env
-            ExecStart=/usr/bin/java -Dspring.profiles.active=dev -jar /home/user_ubuntu/app/deploy/deploy/ticketingsystem-0.0.1-SNAPSHOT.jar
+            ExecStart=/usr/bin/java -Dspring.profiles.active=dev -jar \$JAR_PATH
             SuccessExitStatus=143
             Restart=no
             StandardOutput=file:$LOG_DIR/app.log
