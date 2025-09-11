@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-
 @Configuration
 @Profile("!local")
 public class FirebaseConfig {
