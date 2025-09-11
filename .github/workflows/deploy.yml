@@ -43,7 +43,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: ticketing
+          username: root
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
           script: |
