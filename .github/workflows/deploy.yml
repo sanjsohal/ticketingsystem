@@ -52,13 +52,13 @@ jobs:
             JAR_PATH=$(ls $DEPLOY_DIR/*.jar | head -n 1)
             LOG_DIR=/home/ticketing/logs
 
-            sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
+            cat > /etc/ticketing-system-backend.env
             DATABASE_HOST=${{ secrets.DB_URL }}
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
             EOL
 
-            sudo bash -c "cat > /etc/systemd/system/$APP_NAME.service" <<EOF
+            cat > /etc/systemd/system/$APP_NAME.service
             [Unit]
             Description=Ticketing System Backend Service
             After=network.target
@@ -82,3 +82,9 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl enable $APP_NAME
             sudo systemctl restart $APP_NAME
+            
+            echo "===== Service Status ====="
+            sudo systemctl status $APP_NAME --no-pager
+            
+            echo "===== Recent Logs ====="
+            tail -n 50 $LOG_DIR/app.log || echo "Log file not found yet."
