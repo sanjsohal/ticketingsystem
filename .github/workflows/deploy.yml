@@ -44,6 +44,7 @@ jobs:
           username: ticketing
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
+          strip_components: 1
           source: "target/*.jar"
           target: "${{ env.DEPLOY_DIR }}"
 
