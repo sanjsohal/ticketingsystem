@@ -1,4 +1,4 @@
-name: Deploy Ticketing System Backend
+name: Deploy Ticketing Service Backend
 
 on:
   push:
