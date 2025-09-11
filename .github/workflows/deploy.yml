@@ -50,10 +50,7 @@ jobs:
             APP_NAME=ticketing-system-backend
             DEPLOY_DIR=${{ env.DEPLOY_DIR }}
             JAR_PATH=$(ls $DEPLOY_DIR/*.jar | head -n 1)
-            LOG_DIR=/home/user_ubuntu/app/logs
-
-            sudo mkdir -p $LOG_DIR
-            sudo chown ubuntu:ubuntu $LOG_DIR
+            LOG_DIR=/home/ticketing/logs
 
             sudo bash -c "cat > /etc/ticketing-system-backend.env" <<EOL
             DATABASE_HOST=${{ secrets.DB_URL }}
