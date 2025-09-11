@@ -35,8 +35,7 @@ jobs:
           username: root
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
-          strip_components: 1
-          source: "target/*.jar serviceAccount.json"
+          source: "target/*.jar,serviceAccount.json"
           target: "${{ env.DEPLOY_DIR }}"
 
       - name: Configure systemd service and restart app
