@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      DEPLOY_DIR: /home/user_ubuntu/app/deploy
+      DEPLOY_DIR: /home/ticketing/app
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
