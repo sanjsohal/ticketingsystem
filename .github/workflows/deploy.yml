@@ -36,7 +36,7 @@ jobs:
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
           source: "target/*.jar, serviceAccount.json"
-          target: "/home/user_ubuntu/app/deploy/"
+          target: "${{ env.DEPLOY_DIR }}/"
 
       - name: Configure systemd service and restart app
         uses: appleboy/ssh-action@v0.1.10
