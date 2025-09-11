@@ -27,16 +27,24 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > serviceAccount.json
 
+      - name: Upload firebase JSON
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ticketing
+          key: ${{ secrets.VCCL_SSH_KEY }}
+          port: 22
+          source: "serviceAccount.json"
+          target: "${{ env.DEPLOY_DIR }}"
 
       - name: Upload Artifact to VCCL Server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: root
+          username: ticketing
           key: ${{ secrets.VCCL_SSH_KEY }}
           port: 22
-          strip_components: 1
-          source: "target/*.jar,serviceAccount.json"
+          source: "target/*.jar"
           target: "${{ env.DEPLOY_DIR }}"
 
       - name: Configure systemd service and restart app
