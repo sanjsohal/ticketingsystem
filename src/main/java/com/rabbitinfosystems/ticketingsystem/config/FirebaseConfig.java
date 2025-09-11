@@ -22,7 +22,7 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(new FileInputStream("/home/user_ubuntu/app/deploy/deploy/serviceAccount.json")))
+                .setCredentials(GoogleCredentials.fromStream(new FileInputStream(System.getenv("FIREBASE_SERVICE_ACCOUNT_PATH"))))
                 .build();
 
         FirebaseApp.getApps();
