@@ -19,7 +19,6 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/public/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(firebaseAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
