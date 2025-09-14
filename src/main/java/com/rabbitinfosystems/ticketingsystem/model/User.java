@@ -1,24 +1,20 @@
 package com.rabbitinfosystems.ticketingsystem.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "UUID")
     private UUID id;
-
-    @Column(name = "firebase_uid", nullable = false, unique = true, length = 128)
-    private String firebaseUid;
 
     @Column(nullable = false, unique = true, length = 255)
     private String email;
@@ -28,6 +24,9 @@ public class User {
 
     @Column(length = 50)
     private String role = "USER";  // default role
+
+    @Column(length = 255)
+    private String avatar;
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
