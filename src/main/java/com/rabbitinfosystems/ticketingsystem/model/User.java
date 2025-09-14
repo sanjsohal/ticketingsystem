@@ -13,6 +13,7 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue
     @Column(columnDefinition = "UUID")
     private UUID id;
 
@@ -27,6 +28,9 @@ public class User {
 
     @Column(length = 255)
     private String avatar;
+
+    @Column(name = "firebase_userid")
+    private String firebaseUid;
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
