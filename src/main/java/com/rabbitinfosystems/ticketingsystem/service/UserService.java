@@ -14,7 +14,7 @@ public class UserService {
 
     public User saveUser(RegistrationPayload registrationPayload) {
         User user = new User();
-        user.setId(registrationPayload.firebaseUid());
+        user.setFirebaseUid(registrationPayload.firebaseUid());
         user.setName(registrationPayload.name());
         user.setEmail(registrationPayload.email());
         user.setAvatar(registrationPayload.avatar());
