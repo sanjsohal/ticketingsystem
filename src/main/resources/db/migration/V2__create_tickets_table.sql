@@ -13,7 +13,7 @@ CREATE TABLE tickets (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_requester FOREIGN KEY (requester_id) REFERENCES users(id),
-    CONSTRAINT fk_assigned_to FOREIGN KEY (assigned_to) REFERENCES users(id);
+    CONSTRAINT fk_assigned_to FOREIGN KEY (assigned_to) REFERENCES users(id)
 );
 
 CREATE INDEX idx_tickets_status  ON tickets(status);
