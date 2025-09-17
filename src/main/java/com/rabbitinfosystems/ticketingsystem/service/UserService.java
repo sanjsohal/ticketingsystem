@@ -1,7 +1,6 @@
 package com.rabbitinfosystems.ticketingsystem.service;
 
 import com.rabbitinfosystems.ticketingsystem.dto.RegistrationPayload;
-import com.rabbitinfosystems.ticketingsystem.dto.VerifyEmailPayload;
 import com.rabbitinfosystems.ticketingsystem.model.User;
 import com.rabbitinfosystems.ticketingsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void verifyEmail(VerifyEmailPayload payload) {
-        userRepository.findByFirebaseUid(payload.firebaseUid())
+    public void updateEmailVerifiedFlag(String firebaseUid, boolean isEmailVerified) {
+        userRepository.findByFirebaseUid(firebaseUid)
                 .ifPresent(user -> {
-                    user.setEmailVerified(payload.emailVerified());
+                    user.setEmailVerified(isEmailVerified);
                     userRepository.save(user);
                 });
     }
