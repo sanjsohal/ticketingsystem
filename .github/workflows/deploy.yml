@@ -74,6 +74,9 @@ jobs:
             DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
             FIREBASE_SERVICE_ACCOUNT_PATH=$DEPLOY_DIR/serviceAccount.json
+            MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }}
+            MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}
+            MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
             EOL
 
             cat > /etc/systemd/system/$APP_NAME.service <<EOF
