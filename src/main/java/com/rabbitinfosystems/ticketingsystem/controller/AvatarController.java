@@ -2,6 +2,7 @@ package com.rabbitinfosystems.ticketingsystem.controller;
 
 import com.rabbitinfosystems.ticketingsystem.service.AvatarService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +19,7 @@ public class AvatarController {
         this.avatarService = avatarService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> upload(@RequestPart("file") MultipartFile file,
                                         @RequestPart("firebaseUserId") String firebaseUserId) {
         try {
