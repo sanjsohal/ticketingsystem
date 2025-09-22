@@ -16,8 +16,6 @@ public class MinioConfig {
 
     @Bean
     public S3Client s3Client() {
-        log.info("MINIO_ROOT_USER: {}", System.getenv("MINIO_ROOT_USER"));
-        log.info("MINIO_ROOT_PASSWORD: {}", System.getenv("MINIO_ROOT_PASSWORD"));
         return S3Client.builder()
                 .endpointOverride(URI.create(System.getenv("MINIO_ENDPOINT")))
                 .region(Region.US_EAST_1)
