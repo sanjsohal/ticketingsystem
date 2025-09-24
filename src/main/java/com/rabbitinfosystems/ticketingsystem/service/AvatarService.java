@@ -1,13 +1,15 @@
 package com.rabbitinfosystems.ticketingsystem.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Service
 public class AvatarService {
@@ -19,17 +21,33 @@ public class AvatarService {
         this.s3Client = s3Client;
     }
 
-    public String uploadAvatar(MultipartFile file, String firebaseUserId) throws IOException {
-        String key = "users/" + firebaseUserId + "/" + file.getOriginalFilename();
+    public void uploadAvatar(MultipartFile file, String firebaseUserId) throws IOException {
+        String key = "users/avatars/" + firebaseUserId + "/" + file.getOriginalFilename();
         s3Client.putObject(PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
         .contentType(file.getContentType())
                 .build(), RequestBody.fromBytes(file.getBytes()));
-        return key;
     }
 
-    public String getAvatarUrl(String key) {
-        return s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(key)).toString();
+    public String getAvatarUrl(String firebaseUserId) {
+        String prefix = "users/avatars";
+        String path = "";
+        if(!StringUtils.hasLength(firebaseUserId)) {
+            path = prefix + "/default";
+        } else {
+            path = prefix + "/" + firebaseUserId + "/";
+        }
+        ListObjectsV2Request listObjectsReq = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(path)
+                .maxKeys(1)
+                .build();
+
+        ListObjectsV2Response listResponse = s3Client.listObjectsV2(listObjectsReq);
+        if(listResponse.contents().isEmpty()) {
+            throw new RuntimeException("Avatar not found" + firebaseUserId);
+        }
+        return listResponse.contents().get(0).key();
     }
 }

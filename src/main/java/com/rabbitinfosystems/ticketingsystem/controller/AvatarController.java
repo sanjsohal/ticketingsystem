@@ -23,12 +23,18 @@ public class AvatarController {
     public ResponseEntity<String> upload(@RequestPart("file") MultipartFile file,
                                         @RequestPart("firebaseUserId") String firebaseUserId) {
         try {
-            String key = avatarService.uploadAvatar(file, firebaseUserId);
-            String url = avatarService.getAvatarUrl(key);
+            avatarService.uploadAvatar(file, firebaseUserId);
+            String url = avatarService.getAvatarUrl(firebaseUserId);
             return ResponseEntity.ok(url);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload avatar");
         }
+    }
+
+    @GetMapping("/photo-url/{firebaseUserId}")
+    public ResponseEntity<String> getAvatarUrl(@PathVariable String firebaseUserId) {
+        String url = avatarService.getAvatarUrl(firebaseUserId);
+        return ResponseEntity.ok(url);
     }
 
 }
