@@ -30,7 +30,6 @@ public class AvatarService {
     }
 
     public String getAvatarUrl(String key) {
-        //"http://<your-vps-ip>:9000/" + BUCKET + "/" + key;
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(key)).toString();
     }
 }
