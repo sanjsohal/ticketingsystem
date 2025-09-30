@@ -78,6 +78,7 @@ jobs:
             MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}
             MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
             MINIO_BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME }}
+            MINIO_STORAGE_ENDPOINT=${{ secrets.MINIO_STORAGE_ENDPOINT }}
             EOL
 
             cat > /etc/systemd/system/$APP_NAME.service <<EOF
