@@ -39,7 +39,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: ticketing
+          username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           source: "serviceAccount.json"
@@ -49,7 +49,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: ticketing
+          username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           strip_components: 1
@@ -87,7 +87,7 @@ jobs:
             After=network.target
 
             [Service]
-            User=ticketing
+            User=root
             WorkingDirectory=$DEPLOY_DIR
             EnvironmentFile=/etc/ticketing-system-backend.env
             ExecStart=/usr/bin/java -Dspring.profiles.active=dev -jar $JAR_PATH
