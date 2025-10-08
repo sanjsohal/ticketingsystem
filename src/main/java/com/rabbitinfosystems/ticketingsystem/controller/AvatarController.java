@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/avatars")
+@RequestMapping("/avatars")
 public class AvatarController {
 
     private final AvatarService avatarService;
