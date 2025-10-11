@@ -31,7 +31,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/users/register", "/api/avatars/upload").permitAll()
                 .anyRequest().authenticated()
             )
-            //.addFilterBefore(originCheckFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(originCheckFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
