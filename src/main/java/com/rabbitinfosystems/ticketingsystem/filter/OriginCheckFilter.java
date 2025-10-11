@@ -14,10 +14,11 @@ public class OriginCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if("/api/users/register".equals(request.getRequestURI())) {
+        if ("/api/users/register".equals(request.getRequestURI())) {
             String origin = request.getHeader("Origin");
-            if("https://modern-ticketing-system.vercel.app".equals(origin)) {
+            if (!"https://modern-ticketing-system.vercel.app".equals(origin)) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
         }
         filterChain.doFilter(request, response);
