@@ -23,8 +23,14 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws IOException, ServletException {
+        String requestURI = request.getRequestURI();
+        if ("/api/users/register".equals(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
-        if(header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             try {
                 FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
@@ -32,11 +38,10 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(decodedToken, null, Collections.emptyList());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-
         }
         filterChain.doFilter(request, response);
     }
