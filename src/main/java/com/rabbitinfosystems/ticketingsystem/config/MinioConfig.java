@@ -17,19 +17,6 @@ import java.net.URI;
 public class MinioConfig {
 
     @Bean
-    public S3Client s3Client() {
-        return S3Client.builder()
-                .endpointOverride(URI.create(System.getenv("MINIO_ENDPOINT")))
-                .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(
-                                System.getenv("MINIO_ROOT_USER"),
-                                System.getenv("MINIO_ROOT_PASSWORD"))
-                        ))
-                .build();
-    }
-
-    @Bean
     public S3Presigner s3Presigner() {
         S3Configuration s3Configuration = S3Configuration.builder()
                 .pathStyleAccessEnabled(true)
