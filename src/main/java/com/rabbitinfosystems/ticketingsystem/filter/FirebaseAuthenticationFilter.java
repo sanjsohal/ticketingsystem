@@ -12,11 +12,16 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Collections;
 
 @Component
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseAuthenticationFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -24,7 +29,10 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws IOException, ServletException {
         String requestURI = request.getRequestURI();
+        logger.debug("Processing request URI: {}", requestURI);
+
         if ("/api/users/register".equals(requestURI)) {
+            logger.debug("Skipping authentication for endpoint: /api/users/register");
             filterChain.doFilter(request, response);
             return;
         }
@@ -34,14 +42,18 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             try {
                 FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+                logger.debug("Successfully authenticated token for user: {}", decodedToken.getUid());
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(decodedToken, null, Collections.emptyList());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
+                logger.error("Failed to authenticate token: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+        } else {
+            logger.debug("No Authorization header found or does not start with Bearer");
         }
         filterChain.doFilter(request, response);
     }
