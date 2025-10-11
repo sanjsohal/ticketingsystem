@@ -18,10 +18,6 @@ public class MinioConfig {
 
     @Bean
     public S3Client s3Client() {
-        log.debug("s3Client MINIO_ENDPOINT: {}", System.getenv("MINIO_ENDPOINT"));
-        log.debug("s3Client MINIO_STORAGE_ENDPOINT: {}", System.getenv("MINIO_STORAGE_ENDPOINT"));
-        log.debug("s3Client MINIO_ROOT_USER: {}", System.getenv("MINIO_ROOT_USER"));
-        log.debug("s3Client MINIO_ROOT_PASSWORD: {}", System.getenv("MINIO_ROOT_PASSWORD"));
         return S3Client.builder()
                 .endpointOverride(URI.create(System.getenv("MINIO_ENDPOINT")))
                 .region(Region.US_EAST_1)
@@ -35,10 +31,6 @@ public class MinioConfig {
 
     @Bean
     public S3Presigner s3Presigner() {
-        log.debug("s3Presigner MINIO_ENDPOINT: {}", System.getenv("MINIO_ENDPOINT"));
-        log.debug("s3Presigner MINIO_STORAGE_ENDPOINT: {}", System.getenv("MINIO_STORAGE_ENDPOINT"));
-        log.debug("s3Presigner MINIO_ROOT_USER: {}", System.getenv("MINIO_ROOT_USER"));
-        log.debug("s3Presigner MINIO_ROOT_PASSWORD: {}", System.getenv("MINIO_ROOT_PASSWORD"));
         S3Configuration s3Configuration = S3Configuration.builder()
                 .pathStyleAccessEnabled(true)
                 .build();
