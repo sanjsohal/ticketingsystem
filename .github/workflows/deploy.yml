@@ -93,14 +93,13 @@ jobs:
             ExecStart=/usr/bin/java -Dspring.profiles.active=dev -jar $JAR_PATH
             SuccessExitStatus=143
             Restart=no
-            StandardOutput=file:$LOG_DIR/app.log
-            StandardError=file:$LOG_DIR/app.log
+            StandardOutput=journal
+            StandardError=journal
 
             [Install]
             WantedBy=multi-user.target
             EOF
 
-            rm -f $LOG_DIR/app.log
             
             sudo systemctl unmask $APP_NAME
 
@@ -112,4 +111,4 @@ jobs:
             sudo systemctl status $APP_NAME --no-pager
             
             echo "===== Recent Logs ====="
-            tail -n 50 $LOG_DIR/app.log || echo "Log file not found yet."
+            sudo journalctl -u $APP_NAME -n 50 --no-pager
