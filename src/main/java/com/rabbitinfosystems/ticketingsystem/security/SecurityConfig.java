@@ -28,7 +28,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                    .requestMatchers("/api/users/register", "/api/avatars/upload").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                    .requestMatchers("/api/avatars/upload").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(originCheckFilter, UsernamePasswordAuthenticationFilter.class)
