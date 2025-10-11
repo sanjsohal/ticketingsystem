@@ -3,9 +3,11 @@ package com.rabbitinfosystems.ticketingsystem.service;
 import com.rabbitinfosystems.ticketingsystem.dto.RegistrationPayload;
 import com.rabbitinfosystems.ticketingsystem.model.User;
 import com.rabbitinfosystems.ticketingsystem.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -17,6 +19,7 @@ public class UserService {
         user.setFirebaseUid(registrationPayload.firebaseUid());
         user.setName(registrationPayload.name());
         user.setEmail(registrationPayload.email());
+        log.info("Avatar URL: {}", registrationPayload.avatar());
         user.setAvatar(registrationPayload.avatar());
         user.setEmailVerified(false);
         return userRepository.save(user);
