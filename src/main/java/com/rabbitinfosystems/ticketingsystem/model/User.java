@@ -26,9 +26,6 @@ public class User {
     @Column(length = 50)
     private String role = "USER";  // default role
 
-    @Column(length = 255)
-    private String avatar;
-
     @Column(name = "firebase_userid")
     private String firebaseUid;
 

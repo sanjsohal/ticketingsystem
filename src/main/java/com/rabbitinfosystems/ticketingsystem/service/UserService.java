@@ -19,8 +19,6 @@ public class UserService {
         user.setFirebaseUid(registrationPayload.firebaseUid());
         user.setName(registrationPayload.name());
         user.setEmail(registrationPayload.email());
-        log.info("Avatar URL: {}", registrationPayload.avatar());
-        user.setAvatar(registrationPayload.avatar());
         user.setEmailVerified(false);
         return userRepository.save(user);
     }
