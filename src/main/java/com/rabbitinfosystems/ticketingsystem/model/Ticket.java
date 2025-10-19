@@ -31,7 +31,7 @@ public class Ticket {
     private User requester;
 
     @ManyToOne
-    @JoinColumn(name = "assigned_to_id")
+    @JoinColumn(name = "assigned_to")
     private User assignedTo;
 
     @Column(name = "created_at")
