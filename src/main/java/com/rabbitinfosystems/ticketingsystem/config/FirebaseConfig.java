@@ -6,13 +6,11 @@ import com.google.firebase.FirebaseOptions;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
-@Profile("!local")
 public class FirebaseConfig {
 
 
