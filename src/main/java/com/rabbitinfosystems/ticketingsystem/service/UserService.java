@@ -26,7 +26,7 @@ public class UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private AvatarService avatarService;
+    private AttachmentService attachmentService;
 
     public User saveUser(RegistrationPayload registrationPayload) {
         User user = new User();
@@ -52,7 +52,7 @@ public class UserService {
         }
         User user = userOptional.get();
         UserDto userDto = userMapper.toDto(user);
-        userDto.setAvatar(avatarService.getAvatarUrl(user.getFirebaseUid()));
+        userDto.setAvatar(attachmentService.getAvatarUrl(user.getFirebaseUid()));
         return userDto;
     }
 
@@ -61,7 +61,7 @@ public class UserService {
         List<UserDto> userDtos = new ArrayList<>(users.size());
         for (User user : users) {
             UserDto userDto = userMapper.toDto(user);
-            userDto.setAvatar(avatarService.getAvatarUrl(user.getFirebaseUid()));
+            userDto.setAvatar(attachmentService.getAvatarUrl(user.getFirebaseUid()));
             userDtos.add(userDto);
         }
         return userDtos;

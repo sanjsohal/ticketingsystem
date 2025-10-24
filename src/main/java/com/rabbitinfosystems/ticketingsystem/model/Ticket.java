@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -26,6 +27,10 @@ public class Ticket {
     @Column(columnDefinition = "priority", nullable = false)
     private TicketPriority priority;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "category", nullable = false)
+    private TicketCategory category;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
@@ -37,6 +42,12 @@ public class Ticket {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     // Constructors, getters, and setters
     public Ticket() {
