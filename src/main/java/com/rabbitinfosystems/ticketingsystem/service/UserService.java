@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,5 +54,16 @@ public class UserService {
         UserDto userDto = userMapper.toDto(user);
         userDto.setAvatar(avatarService.getAvatarUrl(user.getFirebaseUid()));
         return userDto;
+    }
+
+    public List<UserDto> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDto> userDtos = new ArrayList<>(users.size());
+        for (User user : users) {
+            UserDto userDto = userMapper.toDto(user);
+            userDto.setAvatar(avatarService.getAvatarUrl(user.getFirebaseUid()));
+            userDtos.add(userDto);
+        }
+        return userDtos;
     }
 }

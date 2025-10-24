@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -41,6 +42,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.findUser(userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
     }
 
 }
