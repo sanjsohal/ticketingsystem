@@ -2,6 +2,7 @@ package com.rabbitinfosystems.ticketingsystem.controller;
 
 import com.google.firebase.auth.FirebaseToken;
 import com.rabbitinfosystems.ticketingsystem.dto.RegistrationPayload;
+import com.rabbitinfosystems.ticketingsystem.dto.UserDto;
 import com.rabbitinfosystems.ticketingsystem.dto.UserInfoResponse;
 import com.rabbitinfosystems.ticketingsystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -33,6 +37,16 @@ public class UserController {
                 firebaseToken.getName(),
                 firebaseToken.isEmailVerified()
         ));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable UUID userId) {
+        return ResponseEntity.ok(userService.findUser(userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
     }
 
 }

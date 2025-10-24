@@ -26,13 +26,11 @@ public class Ticket {
     @Column(columnDefinition = "priority", nullable = false)
     private TicketPriority priority;
 
-    @ManyToOne
-    @JoinColumn(name = "requester_id", nullable = false)
-    private User requester;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
-    private User assignedTo;
+    @Column(name = "assigned_to", nullable = false)
+    private UUID assignedTo;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
