@@ -13,15 +13,19 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class AvatarService {
+public class AttachmentService {
 
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
     private final String bucketName = System.getenv("MINIO_BUCKET_NAME");
+    private final ConcurrentHashMap<String, CachedUrl> urlCache = new ConcurrentHashMap<>();
 
-    public AvatarService(S3Client s3Client, S3Presigner s3Presigner) {
+    public AttachmentService(S3Client s3Client, S3Presigner s3Presigner) {
         this.s3Presigner = s3Presigner;
         this.s3Client = s3Client;
     }
@@ -35,7 +39,20 @@ public class AvatarService {
                 .build(), RequestBody.fromBytes(file.getBytes()));
     }
 
+    public void uploadTicketAttachment(MultipartFile file, UUID ticketId) throws IOException {
+        String key = "tickets/" + ticketId.toString() + "/" + file.getOriginalFilename();
+        s3Client.putObject(PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(file.getContentType())
+                .build(), RequestBody.fromBytes(file.getBytes()));
+    }
+
     public String getAvatarUrl(String firebaseUserId) {
+        CachedUrl cachedUrl = urlCache.get(firebaseUserId);
+        if(cachedUrl != null && cachedUrl.expiry.isAfter(Instant.now())) {
+            return cachedUrl.url;
+        }
         String prefix = "users/avatars";
         String path = "";
         if(!StringUtils.hasLength(firebaseUserId)) {
@@ -64,6 +81,19 @@ public class AvatarService {
                 .signatureDuration(java.time.Duration.ofMinutes(60))
                 .getObjectRequest(getObjectRequest)
                 .build();
-        return s3Presigner.presignGetObject(presignRequest).url().toString();
+        String presignedUrl = s3Presigner.presignGetObject(presignRequest).url().toString();
+        urlCache.put(firebaseUserId, new CachedUrl(presignedUrl, Instant.now().plusSeconds(1 * 60)));
+        return presignedUrl;
     }
+
+    private static class CachedUrl {
+        final String url;
+        final Instant expiry;
+        CachedUrl(String url, Instant expiry) {
+            this.url = url;
+            this.expiry = expiry;
+        }
+    }
+
+
 }
