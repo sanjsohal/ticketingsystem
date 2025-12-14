@@ -14,22 +14,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          distribution: temurin
-          java-version: 17
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/ticketing-backend:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/ticketing-backend:latest
 
       - name: Decode Firebase service account
         run: |
@@ -45,70 +39,15 @@ jobs:
           source: "serviceAccount.json"
           target: "${{ env.DEPLOY_DIR }}"
 
-      - name: Upload Artifact to VCCL Server
-        uses: appleboy/scp-action@v0.1.4
+      - name: Deploy container on VPS
+        uses: appleboy/ssh-actions@0.1.10
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          strip_components: 1
-          source: "target/*.jar"
-          target: "${{ env.DEPLOY_DIR }}"
-
-      - name: Configure systemd service and restart app
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
           script: |
-            APP_NAME=ticketing-system-backend
-            DEPLOY_DIR=${{ env.DEPLOY_DIR }}
-            JAR_PATH=$(ls $DEPLOY_DIR/*.jar | head -n 1)
-            LOG_DIR=/home/ticketing/logs
+            cd /home/ticketing/app
+            docker compose pull
+            docker compose up -d
+            docker ps
 
-            cat > /etc/ticketing-system-backend.env <<EOL
-            DATABASE_HOST=${{ secrets.DB_URL }}
-            DATABASE_USERNAME=${{ secrets.DB_USERNAME }}
-            DATABASE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            FIREBASE_SERVICE_ACCOUNT_PATH=$DEPLOY_DIR/serviceAccount.json
-            MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }}
-            MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}
-            MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
-            MINIO_BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME }}
-            MINIO_STORAGE_ENDPOINT=${{ secrets.MINIO_STORAGE_ENDPOINT }}
-            EOL
-
-            cat > /etc/systemd/system/$APP_NAME.service <<EOF
-            [Unit]
-            Description=Ticketing System Backend Service
-            After=network.target
-
-            [Service]
-            User=root
-            WorkingDirectory=$DEPLOY_DIR
-            EnvironmentFile=/etc/ticketing-system-backend.env
-            ExecStart=/usr/bin/java -Dspring.profiles.active=dev -jar $JAR_PATH
-            SuccessExitStatus=143
-            Restart=no
-            StandardOutput=journal
-            StandardError=journal
-
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-
-            
-            sudo systemctl unmask $APP_NAME
-
-            sudo systemctl daemon-reload
-            sudo systemctl enable $APP_NAME
-            sudo systemctl restart $APP_NAME
-            
-            echo "===== Service Status ====="
-            sudo systemctl status $APP_NAME --no-pager
-            
-            echo "===== Recent Logs ====="
-            sudo journalctl -u $APP_NAME -n 50 --no-pager
