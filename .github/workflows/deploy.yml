@@ -55,6 +55,7 @@ jobs:
             MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }}
             MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}
             MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
+            MINIO_STORAGE_ENDPOINT=${{ secrets.MINIO_STORAGE_ENDPOINT }}
             EOF
             
             cd /home/ticketing/app
