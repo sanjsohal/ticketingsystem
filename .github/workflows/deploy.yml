@@ -46,8 +46,16 @@ jobs:
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            mkdir -p /home/ticketing/app
+            
+            cat > /home/ticketing/app/backend.env << 'EOF'
+            SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+            
             cd /home/ticketing/app
             docker compose pull
+            docker compose down
             docker compose up -d
             docker ps
 
