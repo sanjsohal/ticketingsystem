@@ -27,7 +27,8 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                    .requestMatchers(HttpMethod.OPTIONS, "/***").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                     .requestMatchers("/api/avatars/upload").permitAll()
                 .anyRequest().authenticated()
