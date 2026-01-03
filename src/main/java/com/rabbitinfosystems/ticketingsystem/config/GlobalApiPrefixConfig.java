@@ -11,7 +11,7 @@ public class GlobalApiPrefixConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix("/api",
-                c -> c.isAnnotationPresent(RestController.class)
-                        && !c.getPackageName().startsWith("org.springframework.boot.actuate"));
+                c -> c.isAnnotationPresent(RestController.class));
     }
 }
+
