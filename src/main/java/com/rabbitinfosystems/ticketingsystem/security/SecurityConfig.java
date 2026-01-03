@@ -28,6 +28,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {})
             .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
