@@ -1,7 +1,6 @@
 package com.rabbitinfosystems.ticketingsystem.security;
 
 import com.rabbitinfosystems.ticketingsystem.filter.FirebaseAuthenticationFilter;
-import com.rabbitinfosystems.ticketingsystem.filter.OriginCheckFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +18,6 @@ public class SecurityConfig {
     @Autowired
     private FirebaseAuthenticationFilter firebaseAuthenticationFilter;
 
-    @Autowired
-    private OriginCheckFilter originCheckFilter;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -30,9 +26,9 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                     .requestMatchers("/api/avatars/upload").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(originCheckFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
