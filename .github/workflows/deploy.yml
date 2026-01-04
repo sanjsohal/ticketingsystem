@@ -57,6 +57,7 @@ jobs:
             MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
             MINIO_STORAGE_ENDPOINT=${{ secrets.MINIO_STORAGE_ENDPOINT }}
             FIREBASE_SERVICE_ACCOUNT_PATH=/app/serviceAccount.json
+            SPRING_PROFILES_ACTIVE=dev
             EOF
             
             cd /home/ticketing/app
